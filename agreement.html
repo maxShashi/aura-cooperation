@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURA — Creator Agreement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #05050f; --cyan: #00f0ff; --magenta: #ff00c8;
+    --muted: #6a7a9a; --border: rgba(0,240,255,0.12);
+    --text: #c8d8f0;
+  }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Space Mono', monospace;
+    padding: 60px 40px; max-width: 860px; margin: 0 auto;
+    line-height: 1.8; font-size: 0.82rem;
+  }
+  a.back {
+    display: inline-block; margin-bottom: 40px;
+    color: var(--muted); text-decoration: none; font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+  a.back:hover { color: var(--cyan); }
+  .site-logo {
+    font-family: 'Orbitron', monospace; font-size: 1rem;
+    font-weight: 900; letter-spacing: 4px; color: var(--cyan);
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: 'Orbitron', monospace; font-size: 1.4rem;
+    font-weight: 900; letter-spacing: 3px; color: #fff;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: var(--muted); font-size: 0.72rem; letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .status-banner {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(255,215,0,0.3);
+    background: rgba(255,215,0,0.05);
+    padding: 8px 16px; margin: 20px 0 40px;
+    font-size: 0.72rem; letter-spacing: 1.5px; color: #ffd700;
+  }
+  h2 {
+    font-family: 'Orbitron', monospace; font-size: 0.78rem;
+    font-weight: 700; letter-spacing: 2px; color: var(--cyan);
+    margin: 36px 0 12px; text-transform: uppercase;
+  }
+  p { margin-bottom: 14px; color: var(--text); }
+  ul { padding-left: 20px; margin-bottom: 14px; }
+  li { margin-bottom: 8px; }
+  .highlight { color: #fff; font-weight: bold; }
+  .magenta { color: #ff00c8; font-weight: bold; }
+  .section {
+    border-left: 2px solid var(--border);
+    padding-left: 20px; margin-bottom: 8px;
+  }
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  /* Status flow diagram */
+  .flow {
+    display: flex; align-items: center; gap: 0;
+    margin: 24px 0; flex-wrap: wrap; gap: 8px;
+  }
+  .flow-box {
+    padding: 10px 18px; font-size: 0.7rem; letter-spacing: 1px;
+    font-weight: bold; text-align: center; min-width: 130px;
+  }
+  .flow-pending { border: 1px solid #ffd700; color: #ffd700; background: rgba(255,215,0,0.05); }
+  .flow-active  { border: 1px solid #00ff88; color: #00ff88; background: rgba(0,255,136,0.05); }
+  .flow-void    { border: 1px solid #ff6b6b; color: #ff6b6b; background: rgba(255,107,107,0.05); }
+  .flow-arrow   { color: var(--muted); font-size: 1rem; }
+  .flow-label   { font-size: 0.6rem; color: var(--muted); margin-top: 4px; text-align: center; display: block; }
+
+  .obligation-box {
+    border: 1px solid var(--border);
+    background: rgba(0,240,255,0.03);
+    padding: 16px 20px; margin: 16px 0;
+  }
+  .obligation-box h3 {
+    font-family: 'Orbitron', monospace; font-size: 0.68rem;
+    color: var(--cyan); letter-spacing: 2px; margin-bottom: 10px;
+  }
+
+  .void-notice {
+    border: 1px solid rgba(255,107,107,0.3);
+    background: rgba(255,107,107,0.05);
+    padding: 16px 20px; margin: 24px 0;
+  }
+  .void-notice p { color: #ff9a9a; margin: 0; }
+
+  .active-notice {
+    border: 1px solid rgba(0,255,136,0.3);
+    background: rgba(0,255,136,0.05);
+    padding: 16px 20px; margin: 24px 0;
+  }
+  .active-notice p { color: #80ffb8; margin: 0; }
+
+  .signature-block {
+    margin-top: 48px;
+    border-top: 1px solid var(--border); padding-top: 32px;
+  }
+  .sig-row {
+    display: flex; gap: 40px; flex-wrap: wrap; margin-top: 20px;
+  }
+  .sig-col { flex: 1; min-width: 200px; }
+  .sig-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; }
+  .sig-line { border-bottom: 1px solid rgba(255,255,255,0.15); height: 32px; }
+  .sig-sub { font-size: 0.6rem; color: #3a4a6a; margin-top: 4px; }
+
+  footer-note {
+    display: block; margin-top: 60px;
+    color: #3a4a6a; font-size: 0.65rem; text-align: center;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="/">← Back to AURA</a>
+
+<div class="site-logo">AURA∞ × SWEETHEART.CHAT</div>
+<h1>Creator Agreement</h1>
+<p class="subtitle">AURA Creator Program · Official Partnership Agreement</p>
+
+<div class="status-banner">
+  ⚡ Agreement Status: PENDING — Becomes active only upon written approval from AURA
+</div>
+
+<!-- Status flow -->
+<div class="flow">
+  <div>
+    <div class="flow-box flow-pending">PENDING<br><span style="font-weight:normal;font-size:0.65rem">Application submitted</span></div>
+  </div>
+  <span class="flow-arrow">→</span>
+  <div>
+    <div class="flow-box flow-active">ACTIVE<br><span style="font-weight:normal;font-size:0.65rem">Approved by AURA</span></div>
+    <span class="flow-label">Agreement takes full effect</span>
+  </div>
+  <span class="flow-arrow">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
+  <div>
+    <div class="flow-box flow-void">VOID<br><span style="font-weight:normal;font-size:0.65rem">Application declined</span></div>
+    <span class="flow-label">Agreement null &amp; void · data protected</span>
+  </div>
+</div>
+
+<hr>
+
+<div class="section">
+<h2>Preamble</h2>
+<p>This Creator Agreement ("Agreement") is entered into between:</p>
+<ul>
+  <li><span class="highlight">AURA / Sweetheart.chat</span> ("Company", "We", "Us") — the operator of the AURA Creator Program and the Sweetheart.chat AI social platform</li>
+  <li><span class="highlight">The Applicant</span> ("Creator", "You") — the individual who has submitted an application to the AURA Creator Program</li>
+</ul>
+<p>This Agreement comes into existence at the moment of application submission and enters one of two final states as described herein. It is <span class="magenta">not binding</span> on either party until the Company issues a written approval notice.</p>
+</div>
+
+<div class="section">
+<h2>Article 1 · Agreement Status &amp; Activation</h2>
+
+<p><strong>1.1 Pending State.</strong> Upon submission of your application, this Agreement enters a PENDING state. No rights or obligations described in Articles 3–8 shall take effect during this period. The Company will review your application and respond within <span class="highlight">48 hours</span>.</p>
+
+<p><strong>1.2 Active State (Approval).</strong> This Agreement becomes ACTIVE upon the Company's written notification of approval, delivered via the contact information provided in your application (email, WhatsApp, Telegram, or other stated channel). Upon activation, all articles of this Agreement take full legal effect.</p>
+
+<div class="active-notice">
+  <p>✓ Upon activation: You are officially an AURA Creator Partner. The Company is authorized to proceed with building your AI digital twin in accordance with this Agreement.</p>
+</div>
+
+<p><strong>1.3 Void State (Rejection).</strong> If the Company determines that the application does not meet program requirements, written notification will be provided within 48 hours and this Agreement is rendered NULL AND VOID in its entirety.</p>
+
+<div class="void-notice">
+  <p>✗ Upon rejection: This Agreement is null and void. <strong>We will never, under any circumstances, misuse any personal information, photographs, videos, or other materials you have submitted — regardless of the reason for rejection.</strong> Your data exists solely for the purpose of evaluating your application. It will not be used, shared, published, or retained beyond that purpose. You may request permanent deletion of all your submitted data at any time, and we will comply immediately.</p>
+</div>
+</div>
+
+<div class="section">
+<h2>Article 2 · Representations &amp; Eligibility</h2>
+<p>By submitting this application, the Creator represents and warrants that:</p>
+<ul>
+  <li>You are at least <span class="highlight">18 years of age</span></li>
+  <li>You have the full legal capacity to enter into this Agreement</li>
+  <li>All submitted content (photographs, videos, social profiles) is your own original material and you hold all necessary rights</li>
+  <li>Your participation in the AURA Creator Program does not violate any existing contract, agreement, or obligation you are party to</li>
+  <li>All information provided in your application is accurate and truthful</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Article 3 · Scope of Services (Active Only)</h2>
+<p>Upon activation of this Agreement, the Company shall provide the following services to the Creator:</p>
+<ul>
+  <li>Creation and deployment of a personalized <span class="highlight">AI digital twin</span> modeled on the Creator's appearance, personality, and content style</li>
+  <li>Integration of the AI twin into the Sweetheart.chat platform ecosystem</li>
+  <li>24/7 automated fan engagement on behalf of the Creator</li>
+  <li>Revenue generation and distribution as described in Article 6</li>
+  <li>Ongoing performance reporting and account management</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Article 4 · License Grant (Active Only)</h2>
+<p><strong>4.1 Grant.</strong> Upon activation, the Creator grants the Company a <span class="highlight">non-exclusive, worldwide, royalty-bearing license</span> to use the Creator's submitted materials (including likeness, photographs, voice, and persona) solely for the purpose of creating, operating, and maintaining the Creator's AI digital twin on the Sweetheart.chat platform.</p>
+
+<p><strong>4.2 Limitations.</strong> This license does NOT permit the Company to:</p>
+<ul>
+  <li>Use the Creator's materials for any purpose unrelated to the Creator's own AI twin profile</li>
+  <li>License, sublicense, or transfer the Creator's materials to any third party without explicit written consent</li>
+  <li>Use the Creator's identity to promote other creators or unrelated products</li>
+  <li>Retain or use the Creator's materials beyond the term of this Agreement</li>
+</ul>
+
+<p><strong>4.3 No Unauthorized Use.</strong> The Company explicitly commits: <span class="magenta">under no circumstances will the Creator's personal information, photographs, videos, or any other submitted materials be used, published, or disclosed in any manner without the Creator's explicit prior authorization</span>, beyond what is strictly necessary to fulfill the services described in Article 3.</p>
+</div>
+
+<div class="section">
+<h2>Article 5 · Creator Obligations (Active Only)</h2>
+<p>Upon activation, the Creator agrees to:</p>
+<ul>
+  <li>Provide accurate, high-quality reference materials necessary for AI twin development as reasonably requested by the Company</li>
+  <li>Maintain a social media presence consistent with the Creator profile submitted in the application</li>
+  <li>Promptly notify the Company of any significant changes to personal branding, appearance, or social media accounts</li>
+  <li>Not engage in activities that would materially damage the reputation of the Sweetheart.chat platform</li>
+  <li>Keep the terms of revenue sharing (Article 6) confidential unless mutually agreed otherwise</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Article 6 · Revenue &amp; Compensation (Active Only)</h2>
+<p><strong>6.1 Revenue Sharing.</strong> Revenues generated by the Creator's AI twin on the Sweetheart.chat platform shall be shared between the Creator and the Company according to a revenue split agreed upon in writing at the time of activation.</p>
+<p><strong>6.2 Payment Schedule.</strong> The Company shall provide earnings statements and process payments on a schedule to be specified in the activation notice.</p>
+<p><strong>6.3 Transparency.</strong> The Company commits to providing the Creator with clear, regular reporting of all revenue generated in connection with the Creator's AI twin.</p>
+</div>
+
+<div class="section">
+<h2>Article 7 · Data Protection &amp; Confidentiality (All States)</h2>
+<p>The following provisions apply in ALL states of this Agreement (Pending, Active, and Void):</p>
+
+<div class="obligation-box">
+  <h3>Company Commitments — Unconditional</h3>
+  <ul>
+    <li>The Creator's personal data, photographs, contact information, and any other submitted materials will be stored securely and accessed only by authorized Company personnel</li>
+    <li>No Creator data will be sold, shared, or disclosed to any third party without explicit written consent from the Creator</li>
+    <li>In the event this Agreement enters Void state, all submitted materials will not be used in any commercial, promotional, or operational capacity</li>
+    <li>The Creator may request permanent deletion of all their data at any time</li>
+    <li>All persons depicted in submitted materials are confirmed to be 18+ at time of submission, in compliance with 18 U.S.C. § 2257</li>
+  </ul>
+</div>
+</div>
+
+<div class="section">
+<h2>Article 8 · Term &amp; Termination (Active Only)</h2>
+<p><strong>8.1 Term.</strong> This Agreement, once activated, shall remain in effect for an initial term of 12 months, automatically renewing on a month-to-month basis thereafter unless terminated by either party.</p>
+<p><strong>8.2 Termination by Creator.</strong> The Creator may terminate this Agreement at any time with 30 days' written notice. Upon termination, the Company shall cease all use of the Creator's materials and decommission the AI twin within 30 days.</p>
+<p><strong>8.3 Termination by Company.</strong> The Company may terminate this Agreement with 14 days' written notice, or immediately in the event of material breach by the Creator.</p>
+<p><strong>8.4 Post-Termination.</strong> Upon termination for any reason, the Company shall permanently delete all Creator materials within 30 days and cease all revenue-generating activities on behalf of the Creator.</p>
+</div>
+
+<div class="section">
+<h2>Article 9 · Governing Law &amp; Dispute Resolution</h2>
+<p>This Agreement shall be governed by applicable international commercial law. The parties agree to resolve any disputes first through good-faith negotiation. If negotiation fails, disputes shall be submitted to binding arbitration. Nothing in this Agreement limits either party's right to seek emergency injunctive relief.</p>
+</div>
+
+<div class="section">
+<h2>Article 10 · Entire Agreement</h2>
+<p>This Agreement, together with the AURA Disclaimer & Privacy Policy, constitutes the entire agreement between the parties with respect to the AURA Creator Program. It supersedes all prior discussions, negotiations, and understandings. Amendments to this Agreement must be made in writing and signed by both parties.</p>
+</div>
+
+<hr>
+
+<div class="signature-block">
+  <p style="color:var(--muted);font-size:0.72rem;margin-bottom:16px;">This Agreement enters ACTIVE state only upon written approval by AURA. Submission of application constitutes acknowledgment of having read and understood this Agreement.</p>
+  <div class="sig-row">
+    <div class="sig-col">
+      <div class="sig-label">CREATOR (APPLICANT)</div>
+      <div class="sig-line"></div>
+      <div class="sig-sub">Signature · Date of Activation</div>
+    </div>
+    <div class="sig-col">
+      <div class="sig-label">AURA × SWEETHEART.CHAT (COMPANY)</div>
+      <div class="sig-line"></div>
+      <div class="sig-sub">Authorized Representative · Date of Approval</div>
+    </div>
+  </div>
+</div>
+
+<footer-note>© 2026 AURA × Sweetheart.chat · All Rights Reserved · DMCA Protected</footer-note>
+
+</body>
+</html>
