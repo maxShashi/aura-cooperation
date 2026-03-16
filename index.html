@@ -1691,16 +1691,35 @@
   function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}
   resize();window.addEventListener('resize',resize);
 
-  // particle spawned on oval silhouette edge
+  var streams=[];
+
+  // 边缘粒子（贴身轮廓流动）
   function mkPt(){
     var ang=Math.random()*Math.PI*2;
-    var rx=W*0.13, ry=H*0.38;
-    var ex=W/2+rx*Math.cos(ang), ey=H*0.48+ry*Math.sin(ang);
-    var spd=0.5+Math.random()*1.2;
-    var outX=Math.cos(ang)*spd, outY=Math.sin(ang)*spd-0.25;
-    return{x:ex,y:ey,vx:outX,vy:outY,r:0.8+Math.random()*2,
-      life:1,decay:0.009+Math.random()*0.011,
-      hue:Math.random()<0.75?192:220+Math.random()*60};
+    var rx=W*0.14, ry=H*0.36;
+    var ex=W/2+rx*Math.cos(ang), ey=H*0.45+ry*Math.sin(ang);
+    var spd=0.6+Math.random()*1.8;
+    return{x:ex,y:ey,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd-0.4,
+      r:0.8+Math.random()*2.5,life:1,decay:0.007+Math.random()*0.01,
+      hue:Math.random()<0.7?192:Math.random()<0.5?260:210,type:'edge'};
+  }
+  // 上升粒子（从身体底部升起）
+  function mkRise(){
+    var x=W/2+(Math.random()-0.5)*W*0.22;
+    var y=H*0.75+Math.random()*H*0.15;
+    return{x:x,y:y,vx:(Math.random()-0.5)*0.6,vy:-(0.8+Math.random()*2.2),
+      r:0.5+Math.random()*2,life:1,decay:0.005+Math.random()*0.008,
+      hue:Math.random()<0.6?192:Math.random()<0.5?220:180,type:'rise'};
+  }
+  // 能量光束（快速水平扫射线）
+  function mkBeam(){
+    var y=H*(0.2+Math.random()*0.6);
+    var fromLeft=Math.random()<0.5;
+    return{x:fromLeft?W*0.1:W*0.9,y:y,
+      vx:fromLeft?(1.5+Math.random()*3):-(1.5+Math.random()*3),
+      vy:(Math.random()-0.5)*0.3,
+      r:1.2+Math.random()*1.5,life:1,decay:0.025+Math.random()*0.02,
+      hue:192,type:'beam',trail:[]};
   }
 
   function frame(ts){
@@ -1709,17 +1728,59 @@
     var prog=Math.min(el/DURATION,1);
     cx.clearRect(0,0,W,H);
 
-    // particles
-    for(var i=0;i<6;i++)pts.push(mkPt());
+    // 背景辉光晕（人物后方）
+    var grd=cx.createRadialGradient(W/2,H*0.4,0,W/2,H*0.4,W*0.45);
+    grd.addColorStop(0,'rgba(0,80,180,0.18)');
+    grd.addColorStop(0.5,'rgba(0,40,120,0.08)');
+    grd.addColorStop(1,'rgba(0,0,0,0)');
+    cx.fillStyle=grd;cx.fillRect(0,0,W,H);
+
+    // spawn
+    for(var i=0;i<12;i++)pts.push(mkPt());
+    for(var i=0;i<8;i++)pts.push(mkRise());
+    if(Math.random()<0.12)pts.push(mkBeam());
+
     cx.save();
     for(var i=pts.length-1;i>=0;i--){
       var p=pts[i];
       p.x+=p.vx;p.y+=p.vy;p.life-=p.decay;
       if(p.life<=0){pts.splice(i,1);continue;}
-      cx.globalAlpha=p.life*0.85;
-      cx.shadowBlur=10;cx.shadowColor='hsl('+p.hue+',100%,65%)';
-      cx.fillStyle='hsl('+p.hue+',100%,72%)';
+      var alpha=p.life*(p.type==='beam'?0.9:0.85);
+      cx.globalAlpha=alpha;
+      cx.shadowBlur=p.type==='beam'?20:12;
+      cx.shadowColor='hsl('+p.hue+',100%,65%)';
+      cx.fillStyle='hsl('+p.hue+',100%,'+(p.type==='beam'?90:72)+'%)';
       cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fill();
+      // beam trail
+      if(p.type==='beam'&&p.trail){
+        p.trail.push({x:p.x,y:p.y});
+        if(p.trail.length>12)p.trail.shift();
+        if(p.trail.length>1){
+          cx.globalAlpha=alpha*0.4;cx.lineWidth=p.r*1.5;
+          cx.strokeStyle='hsl('+p.hue+',100%,75%)';
+          cx.beginPath();cx.moveTo(p.trail[0].x,p.trail[0].y);
+          for(var j=1;j<p.trail.length;j++)cx.lineTo(p.trail[j].x,p.trail[j].y);
+          cx.stroke();
+        }
+      }
+    }
+    cx.restore();
+
+    // 竖向能量流（左右两侧）
+    cx.save();
+    for(var s=0;s<2;s++){
+      var sx=W/2+(s===0?-1:1)*W*0.18;
+      var t=(ts/1200+s*0.5)%1;
+      var sy1=H*0.1, sy2=H*0.85;
+      var grad=cx.createLinearGradient(sx,sy1,sx,sy2);
+      grad.addColorStop(0,'rgba(0,240,255,0)');
+      grad.addColorStop(Math.max(0,t-0.1),'rgba(0,240,255,0)');
+      grad.addColorStop(t,'rgba(0,240,255,0.7)');
+      grad.addColorStop(Math.min(1,t+0.1),'rgba(0,240,255,0)');
+      grad.addColorStop(1,'rgba(0,240,255,0)');
+      cx.globalAlpha=0.6;cx.strokeStyle=grad;cx.lineWidth=1.5;
+      cx.shadowBlur=15;cx.shadowColor='#00f0ff';
+      cx.beginPath();cx.moveTo(sx,sy1);cx.lineTo(sx,sy2);cx.stroke();
     }
     cx.restore();
 
