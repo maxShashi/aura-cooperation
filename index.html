@@ -3939,22 +3939,39 @@ function applyLang(lang) {
 // Email copy-on-desktop
 (function(){
   var EMAIL='business@sweetheart.social';
-  function handleEmail(e){
-    var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-    if(isMobile) return;
-    e.preventDefault();
-    navigator.clipboard.writeText(EMAIL).then(function(){
-      var el=e.currentTarget;
-      var orig=el.getAttribute('title')||el.textContent;
-      var prev=el.textContent;
+  function copyEmail(el){
+    var prev=el.textContent;
+    function showCopied(){
       if(el.classList.contains('float-social-email')){
-        el.setAttribute('title','Copied!');
+        el.setAttribute('title','✓ Copied!');
         setTimeout(function(){el.setAttribute('title','Email');},2000);
       } else {
         el.textContent='✓ Copied!';
         setTimeout(function(){el.textContent=prev;},2000);
       }
-    });
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(EMAIL).then(showCopied).catch(function(){
+        fallbackCopy(showCopied);
+      });
+    } else {
+      fallbackCopy(showCopied);
+    }
+  }
+  function fallbackCopy(cb){
+    var ta=document.createElement('textarea');
+    ta.value=EMAIL;
+    ta.style.cssText='position:fixed;opacity:0;top:0;left:0';
+    document.body.appendChild(ta);
+    ta.focus();ta.select();
+    try{document.execCommand('copy');cb();}catch(e){window.prompt('Copy this email:',EMAIL);}
+    document.body.removeChild(ta);
+  }
+  function handleEmail(e){
+    var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if(isMobile) return;
+    e.preventDefault();
+    copyEmail(e.currentTarget);
   }
   document.querySelectorAll('.float-social-email,.footer-email-link').forEach(function(el){
     el.addEventListener('click',handleEmail);
