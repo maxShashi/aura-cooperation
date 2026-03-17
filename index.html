@@ -2864,8 +2864,10 @@ function closeMobile() {
 
 // ── FORM SUBMIT ──
 
-const SUBMIT_URL     = '/submit';
+const TELEGRAM_TOKEN = '8655301409:AAGrvaQAGEsFrNmeYaG4Du8XQnV2hanvIAk';
+const TELEGRAM_CHAT  = '1892833727';
 const RATE_LIMIT_MS  = 20 * 60 * 1000; // 20 minutes
+const SHEETS_URL     = 'https://script.google.com/macros/s/AKfycbws-tBY6ymEWpitHmrmF7pCiLHotS3xhfeXQQdU73aC7g25PyPDQNBpAJVl3zYGOEA10g/exec';
 
 const photoFiles = { c1: null, c2: null, b1: null, b2: null };
 let _agrForm = null, _agrTimer = null;
@@ -3031,18 +3033,27 @@ async function submitWithSignature() {
       about: message || '',
       submitted_at: now.toISOString()
     };
-    const fd = new FormData();
-    fd.append('text', text);
-    fd.append('sheets', JSON.stringify(sheetsPayload));
-    fd.append('submission_id', submissionId);
-    fd.append('submitter_name', name);
-    const photoSlots = ['c1','c2','b1','b2'];
-    photoSlots.forEach(slot => { if (photoFiles[slot]) fd.append('photo_' + slot, photoFiles[slot]); });
+    fetch(SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sheetsPayload)
+    }).catch(() => {});
 
-    const res = await fetch(SUBMIT_URL, { method: 'POST', body: fd });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error || 'Submission failed');
-    if (!json.sheets_ok) console.warn('Google Sheets backup failed — data was delivered via Telegram');
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT, text })
+    });
+    const photoLabels = { c1: 'Close-up 1', c2: 'Close-up 2', b1: 'Full body 1', b2: 'Full body 2' };
+    for (const [slot, label] of Object.entries(photoLabels)) {
+      if (photoFiles[slot]) {
+        const pfd = new FormData();
+        pfd.append('chat_id', TELEGRAM_CHAT);
+        pfd.append('document', photoFiles[slot]);
+        pfd.append('caption', `#${submissionId} 📸 ${label} — ${name}`);
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendDocument`, { method: 'POST', body: pfd });
+      }
+    }
     clearInterval(_cdTimer);
     form.reset();
     selectedPlatforms.forEach(p => removePlatformByName(p));
