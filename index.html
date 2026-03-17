@@ -3936,6 +3936,30 @@ function applyLang(lang) {
   } catch(e) {}
 })();
 
+// Email copy-on-desktop
+(function(){
+  var EMAIL='business@sweetheart.social';
+  function handleEmail(e){
+    var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if(isMobile) return;
+    e.preventDefault();
+    navigator.clipboard.writeText(EMAIL).then(function(){
+      var el=e.currentTarget;
+      var orig=el.getAttribute('title')||el.textContent;
+      var prev=el.textContent;
+      if(el.classList.contains('float-social-email')){
+        el.setAttribute('title','Copied!');
+        setTimeout(function(){el.setAttribute('title','Email');},2000);
+      } else {
+        el.textContent='✓ Copied!';
+        setTimeout(function(){el.textContent=prev;},2000);
+      }
+    });
+  }
+  document.querySelectorAll('.float-social-email,.footer-email-link').forEach(function(el){
+    el.addEventListener('click',handleEmail);
+  });
+})();
 </script>
 </body>
 </html>
