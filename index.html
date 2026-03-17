@@ -3943,8 +3943,18 @@ function applyLang(lang) {
     var prev=el.textContent;
     function showCopied(){
       if(el.classList.contains('float-social-email')){
-        el.setAttribute('title','✓ Copied!');
-        setTimeout(function(){el.setAttribute('title','Email');},2000);
+        var label=el.querySelector('.float-social-label');
+        if(label){
+          label.style.maxWidth='120px';
+          label.style.paddingLeft='12px';
+          var origTxt=label.textContent;
+          label.textContent='COPIED!';
+          setTimeout(function(){
+            label.textContent=origTxt;
+            label.style.maxWidth='';
+            label.style.paddingLeft='';
+          },2000);
+        }
       } else {
         el.textContent='✓ Copied!';
         setTimeout(function(){el.textContent=prev;},2000);
