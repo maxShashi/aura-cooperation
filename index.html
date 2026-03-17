@@ -1692,7 +1692,11 @@
   var SPAWN_EDGE=isMobile?5:10;
   var SPAWN_RISE=isMobile?3:7;
 
-  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;isMobile=W<600;}
+  var bgGrd=null;
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;isMobile=W<600;
+    bgGrd=cx.createRadialGradient(W/2,H*0.4,0,W/2,H*0.4,W*0.45);
+    bgGrd.addColorStop(0,'rgba(0,80,180,0.15)');bgGrd.addColorStop(1,'rgba(0,0,0,0)');
+  }
   resize();window.addEventListener('resize',resize);
 
   function mkPt(){
@@ -1727,11 +1731,8 @@
     var prog=Math.min(el/DURATION,1);
     cx.clearRect(0,0,W,H);
 
-    // 背景辉光（一次性渐变，不每帧重建）
-    var grd=cx.createRadialGradient(W/2,H*0.4,0,W/2,H*0.4,W*0.45);
-    grd.addColorStop(0,'rgba(0,80,180,0.15)');
-    grd.addColorStop(1,'rgba(0,0,0,0)');
-    cx.fillStyle=grd;cx.fillRect(0,0,W,H);
+    // 背景辉光（缓存渐变，仅resize时重建）
+    cx.fillStyle=bgGrd;cx.fillRect(0,0,W,H);
 
     // spawn（受上限控制）
     if(pts.length<MAX_PTS){
@@ -2863,10 +2864,8 @@ function closeMobile() {
 
 // ── FORM SUBMIT ──
 
-const TELEGRAM_TOKEN = '8655301409:AAGrvaQAGEsFrNmeYaG4Du8XQnV2hanvIAk';
-const TELEGRAM_CHAT  = '1892833727';
+const SUBMIT_URL     = '/submit';
 const RATE_LIMIT_MS  = 20 * 60 * 1000; // 20 minutes
-const SHEETS_URL     = 'https://script.google.com/macros/s/AKfycbws-tBY6ymEWpitHmrmF7pCiLHotS3xhfeXQQdU73aC7g25PyPDQNBpAJVl3zYGOEA10g/exec';
 
 const photoFiles = { c1: null, c2: null, b1: null, b2: null };
 let _agrForm = null, _agrTimer = null;
@@ -3022,7 +3021,6 @@ async function submitWithSignature() {
     `📞 Additional Contact: ${contact_platform} — ${contact_value}\n\n` +
     `💬 About: ${message || '—'}`;
   try {
-    // 并行发送：Telegram + Google Sheets 备份
     const now = new Date();
     const sheetsPayload = {
       id: submissionId,
@@ -3033,27 +3031,18 @@ async function submitWithSignature() {
       about: message || '',
       submitted_at: now.toISOString()
     };
-    fetch(SHEETS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(sheetsPayload)
-    }).catch(() => {});  // 备份失败不影响主流程
+    const fd = new FormData();
+    fd.append('text', text);
+    fd.append('sheets', JSON.stringify(sheetsPayload));
+    fd.append('submission_id', submissionId);
+    fd.append('submitter_name', name);
+    const photoSlots = ['c1','c2','b1','b2'];
+    photoSlots.forEach(slot => { if (photoFiles[slot]) fd.append('photo_' + slot, photoFiles[slot]); });
 
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TELEGRAM_CHAT, text })
-    });
-    const photoLabels = { c1: 'Close-up 1', c2: 'Close-up 2', b1: 'Full body 1', b2: 'Full body 2' };
-    for (const [slot, label] of Object.entries(photoLabels)) {
-      if (photoFiles[slot]) {
-        const pfd = new FormData();
-        pfd.append('chat_id', TELEGRAM_CHAT);
-        pfd.append('document', photoFiles[slot]);
-        pfd.append('caption', `#${submissionId} 📸 ${label} — ${name}`);
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendDocument`, { method: 'POST', body: pfd });
-      }
-    }
+    const res = await fetch(SUBMIT_URL, { method: 'POST', body: fd });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Submission failed');
+    if (!json.sheets_ok) console.warn('Google Sheets backup failed — data was delivered via Telegram');
     clearInterval(_cdTimer);
     form.reset();
     selectedPlatforms.forEach(p => removePlatformByName(p));
@@ -3084,7 +3073,11 @@ function togglePlatform(chip) {
     const list = document.getElementById('platformList');
     const row = document.createElement('div');
     row.className = 'platform-row'; row.id = 'prow-' + p;
-    row.innerHTML = `<span class="platform-row-label">${p}</span><input type="text" id="plink-${p}" placeholder="Your ${p} profile link"><button type="button" class="platform-row-remove" onclick="removePlatformByName('${p}')">✕</button>`;
+    const lbl = document.createElement('span'); lbl.className = 'platform-row-label'; lbl.textContent = p;
+    const inp = document.createElement('input'); inp.type = 'text'; inp.id = 'plink-' + p; inp.placeholder = 'Your ' + p + ' profile link';
+    const rmb = document.createElement('button'); rmb.type = 'button'; rmb.className = 'platform-row-remove'; rmb.textContent = '✕';
+    rmb.addEventListener('click', function(){ removePlatformByName(p); });
+    row.appendChild(lbl); row.appendChild(inp); row.appendChild(rmb);
     list.appendChild(row);
   }
 }
