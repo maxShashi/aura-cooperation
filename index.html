@@ -2986,13 +2986,12 @@ async function submitWithSignature() {
   document.body.style.overflow = '';
   const btn = form.querySelector('.form-submit');
   btn.disabled = true;
-  let _cdN = 8;
-  btn.textContent = `${_cdN}s  SENDING…`;
+  btn.textContent = '⏳ SENDING…';
+  let _dot = 0;
   const _cdTimer = setInterval(() => {
-    _cdN--;
-    btn.textContent = _cdN > 0 ? `${_cdN}s  SENDING…` : 'SENDING…';
-    if (_cdN <= 0) clearInterval(_cdTimer);
-  }, 1000);
+    _dot = (_dot + 1) % 4;
+    btn.textContent = '⏳ SENDING' + '.'.repeat(_dot);
+  }, 400);
   const fd = new FormData(form);
   const name     = fd.get('name')     || '';
   const email    = fd.get('email')    || '';
